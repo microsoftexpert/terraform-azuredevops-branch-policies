@@ -40,12 +40,12 @@ Whether it's a star, a professional connection, or a coffee, every gesture helps
 
 ```mermaid
 flowchart LR
- project["tf-mod-azuredevops-project<br/>(emits project_id)"]
- repo["tf-mod-azuredevops-git-repository<br/>(emits repository_id)"]
- build["tf-mod-azuredevops-build-definition<br/>(emits build_definition_id)"]
- bp["tf-mod-azuredevops-branch-policies<br/>(THIS MODULE)"]
- repopol["tf-mod-azuredevops-repository-policies"]
- checks["tf-mod-azuredevops-pipeline-checks"]
+ project["terraform-azuredevops-project<br/>(emits project_id)"]
+ repo["terraform-azuredevops-git-repository<br/>(emits repository_id)"]
+ build["terraform-azuredevops-build-definition<br/>(emits build_definition_id)"]
+ bp["terraform-azuredevops-branch-policies<br/>(THIS MODULE)"]
+ repopol["terraform-azuredevops-repository-policies"]
+ checks["terraform-azuredevops-pipeline-checks"]
 
  project -->|project_id| repo
  project -->|project_id| build
@@ -132,7 +132,7 @@ Creating and editing branch policies requires the running identity to be a membe
 ## 📁 Module Structure
 
 ```
-tf-mod-azuredevops-branch-policies/
+terraform-azuredevops-branch-policies/
 ├── providers.tf # Terraform >= 1.12, azuredevops >= 1.0, < 2.0 (no provider block)
 ├── variables.tf # project_id + 7 independently-optional map(object) collections
 ├── main.tf # 7 for_each resources, named by role (no `this`)
@@ -149,7 +149,7 @@ The smallest useful call — require 2 reviewers on the default branch:
 
 ```hcl
 module "branch_policies" {
-  source = "git::https://github.com/microsoftexpert/tf-mod-azuredevops-branch-policies?ref=v1.0.0"
+  source = "git::https://github.com/microsoftexpert/terraform-azuredevops-branch-policies?ref=v1.0.0"
 
   project_id = module.project.project_id
 
@@ -174,9 +174,9 @@ module "branch_policies" {
 
 | Input | Type | Source module |
 |---|---|---|
-| `project_id` | `string` | `tf-mod-azuredevops-project` (`project_id`) |
-| `repository_id` *(per-scope)* | `string` | `tf-mod-azuredevops-git-repository` (`repository_id`) — supplied inside each policy's `scope` |
-| `build_definition_id` *(per build_validation)* | `number` | `tf-mod-azuredevops-build-definition` — supplied inside `build_validation.settings` |
+| `project_id` | `string` | `terraform-azuredevops-project` (`project_id`) |
+| `repository_id` *(per-scope)* | `string` | `terraform-azuredevops-git-repository` (`repository_id`) — supplied inside each policy's `scope` |
+| `build_definition_id` *(per build_validation)* | `number` | `terraform-azuredevops-build-definition` — supplied inside `build_validation.settings` |
 
 ### Emits
 
@@ -201,7 +201,7 @@ module "branch_policies" {
 
 ```hcl
 module "branch_policies" {
-  source     = "git::https://github.com/microsoftexpert/tf-mod-azuredevops-branch-policies?ref=v1.0.0"
+  source     = "git::https://github.com/microsoftexpert/terraform-azuredevops-branch-policies?ref=v1.0.0"
   project_id = module.project.project_id
 
   min_reviewers = {
@@ -444,25 +444,25 @@ build_validation = {
 
 ```hcl
 module "project" {
-  source = "git::https://github.com/microsoftexpert/tf-mod-azuredevops-project?ref=v1.0.0"
+  source = "git::https://github.com/microsoftexpert/terraform-azuredevops-project?ref=v1.0.0"
   name   = "Payments"
 }
 
 module "repo" {
-  source     = "git::https://github.com/microsoftexpert/tf-mod-azuredevops-git-repository?ref=v1.0.0"
+  source     = "git::https://github.com/microsoftexpert/terraform-azuredevops-git-repository?ref=v1.0.0"
   project_id = module.project.project_id
   name       = "payments-api"
 }
 
 module "build" {
-  source     = "git::https://github.com/microsoftexpert/tf-mod-azuredevops-build-definition?ref=v1.0.0"
+  source     = "git::https://github.com/microsoftexpert/terraform-azuredevops-build-definition?ref=v1.0.0"
   project_id = module.project.project_id
   name       = "payments-api-ci"
   #... repository + yml_path wiring...
 }
 
 module "branch_policies" {
-  source     = "git::https://github.com/microsoftexpert/tf-mod-azuredevops-branch-policies?ref=v1.0.0"
+  source     = "git::https://github.com/microsoftexpert/terraform-azuredevops-branch-policies?ref=v1.0.0"
   project_id = module.project.project_id
 
   min_reviewers = {
@@ -558,7 +558,7 @@ Validation enforced at plan time: every policy must define ≥1 `scope`; every `
 - **Secure-by-default.** A declared policy is `enabled = true` and `blocking = true` — opt out explicitly to stage (`enabled = false`) or make advisory (`blocking = false`).
 - **Eventual consistency.** Policies apply asynchronously; a PR opened seconds after `apply` may briefly not reflect a new policy.
 - **No write-only secrets / no immutable-recreate traps here.** Unlike service connections, branch policies hold no secrets. `project_id` is effectively immutable per policy — changing it recreates the policy.
-- **Prerequisites.** `build_validation` requires the pipeline to exist first (`build_definition_id`); `auto_reviewers` requires reviewer group/user descriptors (from `tf-mod-azuredevops-group`/`team`).
+- **Prerequisites.** `build_validation` requires the pipeline to exist first (`build_definition_id`); `auto_reviewers` requires reviewer group/user descriptors (from `terraform-azuredevops-group`/`team`).
 
 ---
 
@@ -575,7 +575,7 @@ Validation enforced at plan time: every policy must define ≥1 `scope`; every `
 ## 🚀 Runbook
 
 ```powershell
-cd C:\GitHubCode\newazuredevopsmodules\tf-mod-azuredevops-branch-policies
+cd C:\GitHubCode\newazuredevopsmodules\terraform-azuredevops-branch-policies
 terraform init -backend=false
 terraform validate
 terraform fmt -check
@@ -632,7 +632,7 @@ all_policy_ids = {
 - [Set branch permissions](https://learn.microsoft.com/azure/devops/repos/git/branch-permissions)
 - [azuredevops provider — branch_policy_* resources](https://registry.terraform.io/providers/microsoft/azuredevops/latest/docs)
 - `SCOPE.md` — cross-module contract, required scopes/auth, provider gotchas
-- Sibling modules: `tf-mod-azuredevops-project`, `tf-mod-azuredevops-git-repository`, `tf-mod-azuredevops-build-definition`, `tf-mod-azuredevops-repository-policies`, `tf-mod-azuredevops-pipeline-checks`
+- Sibling modules: `terraform-azuredevops-project`, `terraform-azuredevops-git-repository`, `terraform-azuredevops-build-definition`, `terraform-azuredevops-repository-policies`, `terraform-azuredevops-pipeline-checks`
 
 ---
 

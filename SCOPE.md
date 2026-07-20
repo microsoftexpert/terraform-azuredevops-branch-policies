@@ -1,4 +1,4 @@
-# SCOPE — `tf-mod-azuredevops-branch-policies`
+# SCOPE — `terraform-azuredevops-branch-policies`
 
 > **Module type:** `aggregation`  ·  **Provider:** `microsoft/azuredevops` (`>= 1.0, < 2.0`)  ·  **Scope:** project-scoped
 
@@ -20,15 +20,15 @@ Aggregation of branch protection policies. No primary resource. Each policy type
 
 ## Out-of-scope resources (consumed by ID)
 
-- `azuredevops_project` — provided as `project_id` by `tf-mod-azuredevops-project`.
-- `azuredevops_git_repository` — provided as `repository_id` by `tf-mod-azuredevops-git-repository`.
+- `azuredevops_project` — provided as `project_id` by `terraform-azuredevops-project`.
+- `azuredevops_git_repository` — provided as `repository_id` by `terraform-azuredevops-git-repository`.
 
 ## Consumes
 
 | Input | Type | Source module |
 |---|---|---|
-| `project_id` | string | `tf-mod-azuredevops-project` |
-| `repository_id` | string | tf-mod-azuredevops-git-repository |
+| `project_id` | string | `terraform-azuredevops-project` |
+| `repository_id` | string | terraform-azuredevops-git-repository |
 
 ## Required Azure DevOps scopes / auth
 
@@ -62,7 +62,7 @@ permission on the target repository/branch (per Microsoft Learn, *Branch policie
   do **not** set `repository_id`/`repository_ref` for that scope entry. `repository_id = null` (with
   `Exact`/`Prefix`) scopes the policy to **all** repositories in the project.
 - **`build_validation`** requires a valid `build_definition_id` (number) — create the pipeline first
-  (`tf-mod-azuredevops-build-definition`) and pass its ID. `valid_duration = 0` means the build never expires.
+  (`terraform-azuredevops-build-definition`) and pass its ID. `valid_duration = 0` means the build never expires.
 - **`auto_reviewers`** requires ≥1 reviewer descriptor in `auto_reviewer_ids`. `minimum_number_of_reviewers`
   only takes effect when `blocking = true`, and can exceed `1` only when `auto_reviewer_ids` is exactly one group.
 - **`status_check.applicability`** is `default` or `conditional`; `conditional` applies the policy only
